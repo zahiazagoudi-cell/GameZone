@@ -12,14 +12,19 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='none' stroke='%2300d4ff' stroke-width='2'/%3E%3Ctext x='50' y='60' font-size='40' font-weight='bold' fill='%2300d4ff' text-anchor='middle'%3EGZ%3C/text%3E%3C/svg%3E" alt="GameZone" class="logo-img">
+                <img src="logo.png" alt="GameZone" class="logo-img">
                 <span>GameZone</span>
             </div>
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-box" placeholder="Search games..." />
-                <button class="search-btn"><i class="fas fa-search"></i></button>
-            </div>
             <div class="nav-right">
+                <button class="search-icon-btn" id="searchToggle" title="Search games">
+                    <i class="fas fa-search"></i>
+                </button>
+                <a href="https://www.tiktok.com/@1.game.zone.1?_r=1&_t=ZP-96" target="_blank" class="social-nav-icon" title="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+                <a href="https://www.instagram.com/1game.zone.1?igsh=MTVpdmFscnVoOGpycA==" target="_blank" class="social-nav-icon" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
                 <button class="language-toggle" id="langToggle">
                     <i class="fas fa-globe"></i>
                     <span id="langText">العربية</span>
@@ -45,6 +50,32 @@
             </div>
         </div>
     </nav>
+
+    <!-- Search Modal -->
+    <div class="search-modal-overlay" id="searchModal" role="dialog" aria-modal="true" aria-label="Search">
+        <div class="search-modal">
+            <div class="search-modal-header">
+                <div class="search-modal-input-wrapper">
+                    <i class="fas fa-search search-modal-icon"></i>
+                    <input type="text" id="searchModalInput" class="search-modal-input" placeholder="Search games..." autocomplete="off" spellcheck="false">
+                    <button class="search-modal-clear" id="searchClear" aria-label="Clear"><i class="fas fa-times"></i></button>
+                </div>
+                <button class="search-modal-close" id="searchClose"><i class="fas fa-times"></i> <span>ESC</span></button>
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-results-container" id="searchResults">
+                <div class="search-hint">
+                    <i class="fas fa-gamepad"></i>
+                    <p id="searchHintText">Start typing to find your favorite game...</p>
+                </div>
+            </div>
+            <div class="search-modal-footer">
+                <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+                <span><kbd>↵</kbd> Select</span>
+                <span><kbd>ESC</kbd> Close</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <div class="main-content">
