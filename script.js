@@ -22,7 +22,8 @@ const translations = {
         freeLabel: "Free",
         supportLabel: "Support",
         langText: "العربية",
-        searchPlaceholder: "Search games..."
+        searchPlaceholder: "Search games...",
+        searchHintText: "Start typing to find your favorite game..."
     },
     ar: {
         menuTitle: "القائمة",
@@ -46,19 +47,66 @@ const translations = {
         freeLabel: "مجاني",
         supportLabel: "الدعم",
         langText: "English",
-        searchPlaceholder: "ابحث عن ألعاب..."
+        searchPlaceholder: "ابحث عن ألعاب...",
+        searchHintText: "ابدأ الكتابة للعثور على لعبتك المفضلة..."
     }
 };
 
+// Game data for search
+const gamesData = [
+    {
+        name: "Grand Theft Auto V",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/271590/header.jpg",
+        rating: "4.8",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Forza Horizon 5 Mobile",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
+        rating: "4.7",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Red Dead Redemption 2",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1174180/header.jpg",
+        rating: "4.9",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Fall Guys: Ultimate Knockout",
+        img: "https://img.utdstc.com/icon/121/3e2/1213e2bac4111360c073483b82c033bae5691ebb752bb639acf5413efdf7938b:200",
+        rating: "4.5",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "God of War",
+        img: "https://m.media-amazon.com/images/M/MV5BNjJiNTFhY2QtNzZkYi00MDNiLWEzNGEtNWE1NzBkOWIxNmY5XkEyXkFqcGc@._V1_.jpg",
+        rating: "4.8",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Fortnite",
+        img: "https://play-lh.googleusercontent.com/FxJDPDIDJKlG9C8lOxaS041X27A0SrHAa46SGDIpPusAd4IEJihZTyGf-8rTZ_GpF34aeLvULilVuO0cpCJxTg=w600-h300-pc0xffffff-pd",
+        rating: "4.6",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Free Fire Script Headshot",
+        img: "https://storage.googleapis.com/cdn.vcgamers.com/news/wp-content/uploads/2023/12/Script-FF-Auto-Headshot.jpg",
+        rating: "4.7",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    }
+];
+
 // Current language
 let currentLang = localStorage.getItem('language') || 'en';
+let highlightedIndex = -1;
 
-// Initialize language on page load
 document.addEventListener('DOMContentLoaded', () => {
     setLanguage(currentLang);
     updatePageDirection();
     setupHamburgerMenu();
-    setupSearch();
+    setupSearchModal();
 });
 
 // Hamburger Menu
@@ -70,11 +118,8 @@ function setupHamburgerMenu() {
         mobileMenu.classList.toggle('active');
     });
 
-    const menuLinks = mobileMenu.querySelectorAll('a');
-    menuLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-        });
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => mobileMenu.classList.remove('active'));
     });
 
     document.addEventListener('click', (e) => {
@@ -84,29 +129,137 @@ function setupHamburgerMenu() {
     });
 }
 
-// Search functionality
-function setupSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.querySelector('.search-btn');
-    const gameCards = document.querySelectorAll('.game-card');
+// Search Modal
+function setupSearchModal() {
+    const overlay = document.getElementById('searchModal');
+    const modalInput = document.getElementById('searchModalInput');
+    const clearBtn = document.getElementById('searchClear');
+    const closeBtn = document.getElementById('searchClose');
+    const searchToggle = document.getElementById('searchToggle');
+    const resultsContainer = document.getElementById('searchResults');
 
-    function filterGames() {
-        const searchTerm = searchInput.value.toLowerCase();
-        let visibleCount = 0;
-
-        gameCards.forEach(card => {
-            const gameName = card.getAttribute('data-name').toLowerCase();
-            if (gameName.includes(searchTerm)) {
-                card.classList.remove('hidden');
-                visibleCount++;
-            } else {
-                card.classList.add('hidden');
-            }
-        });
+    function openModal() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => modalInput.focus(), 50);
+        highlightedIndex = -1;
+        renderHint();
     }
 
-    searchInput.addEventListener('keyup', filterGames);
-    searchBtn.addEventListener('click', filterGames);
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        modalInput.value = '';
+        clearBtn.classList.remove('visible');
+        renderHint();
+        highlightedIndex = -1;
+    }
+
+    function renderHint() {
+        const lang = translations[currentLang];
+        resultsContainer.innerHTML = `
+            <div class="search-hint">
+                <i class="fas fa-gamepad"></i>
+                <p>${lang.searchHintText}</p>
+            </div>`;
+    }
+
+    function highlightText(text, query) {
+        if (!query) return text;
+        const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+    }
+
+    function renderResults(query) {
+        const trimmed = query.trim().toLowerCase();
+        if (!trimmed) { renderHint(); return; }
+
+        const matches = gamesData.filter(g => g.name.toLowerCase().includes(trimmed));
+
+        if (!matches.length) {
+            resultsContainer.innerHTML = `
+                <div class="search-no-results">
+                    <i class="fas fa-search"></i>
+                    <p>No games found for "<strong>${query}</strong>"</p>
+                </div>`;
+            return;
+        }
+
+        resultsContainer.innerHTML = matches.map((game, i) => `
+            <a href="${game.href}" class="search-result-item" data-index="${i}" target="_blank" rel="noopener">
+                <img class="search-result-img" src="${game.img}" alt="${game.name}" loading="lazy">
+                <div class="search-result-info">
+                    <div class="search-result-name">${highlightText(game.name, query)}</div>
+                    <div class="search-result-meta">
+                        <span class="search-result-badge">FREE</span>
+                        <span class="search-result-rating"><i class="fas fa-star"></i> ${game.rating}</span>
+                    </div>
+                </div>
+                <i class="fas fa-arrow-right search-result-arrow"></i>
+            </a>
+        `).join('');
+
+        highlightedIndex = -1;
+    }
+
+    function getResultItems() {
+        return resultsContainer.querySelectorAll('.search-result-item');
+    }
+
+    function applyHighlight(items, index) {
+        items.forEach((item, i) => {
+            item.classList.toggle('highlighted', i === index);
+        });
+        if (index >= 0 && items[index]) {
+            items[index].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    // Open modal
+    searchToggle.addEventListener('click', openModal);
+
+    // Close modal
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            overlay.classList.contains('active') ? closeModal() : openModal();
+        }
+        if (!overlay.classList.contains('active')) return;
+        const items = getResultItems();
+        if (e.key === 'Escape') {
+            closeModal();
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+            applyHighlight(items, highlightedIndex);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            highlightedIndex = Math.max(highlightedIndex - 1, -1);
+            applyHighlight(items, highlightedIndex);
+        } else if (e.key === 'Enter' && highlightedIndex >= 0 && items[highlightedIndex]) {
+            items[highlightedIndex].click();
+        }
+    });
+
+    // Input events
+    modalInput.addEventListener('input', () => {
+        const val = modalInput.value;
+        clearBtn.classList.toggle('visible', val.length > 0);
+        renderResults(val);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        modalInput.value = '';
+        clearBtn.classList.remove('visible');
+        renderHint();
+        modalInput.focus();
+    });
 }
 
 // Language toggle
@@ -121,15 +274,11 @@ document.getElementById('langToggle').addEventListener('click', () => {
 function setLanguage(lang) {
     Object.keys(translations[lang]).forEach(key => {
         const element = document.getElementById(key);
-        if (element) {
-            element.textContent = translations[lang][key];
-        }
+        if (element) element.textContent = translations[lang][key];
     });
 
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.placeholder = translations[lang].searchPlaceholder;
-    }
+    const searchToggle = document.getElementById('searchToggle');
+    if (searchToggle) searchToggle.title = lang === 'ar' ? 'بحث عن ألعاب' : 'Search games';
 }
 
 // Update page direction
@@ -151,11 +300,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
