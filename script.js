@@ -4,11 +4,8 @@ const translations = {
         menuTitle: "Menu",
         homeText: "Home",
         aboutText: "About",
-        homeLink: "🏠 Home",
-        aboutLink: "ℹ️ About",
         gamesTitle: "Our Games",
         gamesSubtitle: "Choose your favorite game and start playing now!",
-        playBtn: "Play Now",
         playText: "Play Now",
         gta5Desc: "Experience an open-world adventure in a massive metropolis with unlimited possibilities and thrilling missions.",
         forzaDesc: "Race across stunning landscapes in high-speed competitions with amazing graphics and intense gameplay.",
@@ -24,17 +21,15 @@ const translations = {
         gamesCount: "Games",
         freeLabel: "Free",
         supportLabel: "Support",
-        langText: "العربية"
+        langText: "العربية",
+        searchPlaceholder: "Search games..."
     },
     ar: {
         menuTitle: "القائمة",
         homeText: "الرئيسية",
         aboutText: "عنا",
-        homeLink: "🏠 الرئيسية",
-        aboutLink: "ℹ️ عنا",
         gamesTitle: "ألعابنا",
         gamesSubtitle: "اختر لعبتك المفضلة وابدأ اللعب الآن!",
-        playBtn: "العب الآن",
         playText: "العب الآن",
         gta5Desc: "اختبر مغامرة عالم مفتوح في مدينة ضخمة بإمكانيات غير محدودة ومهام مثيرة.",
         forzaDesc: "تنافس عبر مناظر طبيعية مذهلة في سباقات عالية السرعة برسوميات رائعة وألعاب مكثفة.",
@@ -50,7 +45,8 @@ const translations = {
         gamesCount: "ألعاب",
         freeLabel: "مجاني",
         supportLabel: "الدعم",
-        langText: "English"
+        langText: "English",
+        searchPlaceholder: "ابحث عن ألعاب..."
     }
 };
 
@@ -62,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setLanguage(currentLang);
     updatePageDirection();
     setupHamburgerMenu();
+    setupSearch();
 });
 
 // Hamburger Menu
@@ -73,7 +70,6 @@ function setupHamburgerMenu() {
         mobileMenu.classList.toggle('active');
     });
 
-    // Close menu when clicking on a link
     const menuLinks = mobileMenu.querySelectorAll('a');
     menuLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -81,12 +77,36 @@ function setupHamburgerMenu() {
         });
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.navbar')) {
             mobileMenu.classList.remove('active');
         }
     });
+}
+
+// Search functionality
+function setupSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.querySelector('.search-btn');
+    const gameCards = document.querySelectorAll('.game-card');
+
+    function filterGames() {
+        const searchTerm = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        gameCards.forEach(card => {
+            const gameName = card.getAttribute('data-name').toLowerCase();
+            if (gameName.includes(searchTerm)) {
+                card.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    searchInput.addEventListener('keyup', filterGames);
+    searchBtn.addEventListener('click', filterGames);
 }
 
 // Language toggle
@@ -105,6 +125,11 @@ function setLanguage(lang) {
             element.textContent = translations[lang][key];
         }
     });
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.placeholder = translations[lang].searchPlaceholder;
+    }
 }
 
 // Update page direction
