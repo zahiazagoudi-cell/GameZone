@@ -23,7 +23,9 @@ const translations = {
         supportLabel: "Support",
         langText: "العربية",
         searchPlaceholder: "Search games...",
-        searchHintText: "Start typing to find your favorite game..."
+        searchHintText: "Start typing to find your favorite game...",
+        androidBtnText: "Download for Android",
+        iosBtnText: "Download for iPhone"
     },
     ar: {
         menuTitle: "القائمة",
@@ -48,7 +50,9 @@ const translations = {
         supportLabel: "الدعم",
         langText: "English",
         searchPlaceholder: "ابحث عن ألعاب...",
-        searchHintText: "ابدأ الكتابة للعثور على لعبتك المفضلة..."
+        searchHintText: "ابدأ الكتابة للعثور على لعبتك المفضلة...",
+        androidBtnText: "تنزيل للاندرويد",
+        iosBtnText: "تنزيل للايفون"
     }
 };
 
@@ -95,6 +99,12 @@ const gamesData = [
         img: "https://storage.googleapis.com/cdn.vcgamers.com/news/wp-content/uploads/2023/12/Script-FF-Auto-Headshot.jpg",
         rating: "4.7",
         href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Mixtape",
+        img: "https://i.ytimg.com/vi/F6TQF6eJa3Y/sddefault.jpg",
+        rating: "4.5",
+        href: "https://gamezone771.blogspot.com/?m=1"
     }
 ];
 
@@ -107,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePageDirection();
     setupHamburgerMenu();
     setupSearchModal();
+    setupGameModal();
 });
 
 // Hamburger Menu
@@ -303,3 +314,54 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
+
+// Game Detail Modal
+function setupGameModal() {
+    const overlay = document.getElementById('gameModal');
+    const closeBtn = document.getElementById('gameModalClose');
+    const modalImg = document.getElementById('gameModalImg');
+    const modalTitle = document.getElementById('gameModalTitle');
+    const modalDesc = document.getElementById('gameModalDesc');
+    const modalRating = document.getElementById('gameModalRating');
+
+    function openGameModal(card) {
+        const name = card.querySelector('h3').textContent.trim();
+        const img = card.querySelector('.game-image img').src;
+        const desc = card.querySelector('.game-info p').textContent.trim();
+        const ratingEl = card.querySelector('.rating');
+        const rating = ratingEl ? ratingEl.textContent.replace(/[^\d.]/g, '').trim() : '';
+
+        modalImg.src = img;
+        modalImg.alt = name;
+        modalTitle.textContent = name;
+        modalDesc.textContent = desc;
+        modalRating.textContent = rating;
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeGameModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.game-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const anchor = e.target.closest('a');
+            if (anchor) e.preventDefault();
+            openGameModal(card);
+        });
+    });
+
+    closeBtn.addEventListener('click', closeGameModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeGameModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            closeGameModal();
+        }
+    });
+}

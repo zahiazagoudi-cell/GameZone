@@ -226,29 +226,27 @@
                         </div>
                     </div>
                 </div>
+                <!-- Game 8: Mixtape -->
+                <div class="game-card" data-name="Mixtape">
+                    <div class="game-image">
+                        <img src="https://i.ytimg.com/vi/F6TQF6eJa3Y/sddefault.jpg" alt="Mixtape">
+                        <div class="game-overlay">
+                            <a href="https://gamezone771.blogspot.com/?m=1" class="play-btn">
+                                <i class="fas fa-play"></i> <span>Play Now</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Mixtape</h3>
+                        <p>Dive into the world of Mixtape — a nostalgic adventure full of music, memories, and unforgettable moments. Explore a cinematic story inspired by teenage friendships, late-night rides, and classic mixtapes.</p>
+                        <div class="game-meta">
+                            <span class="free-badge">FREE</span>
+                            <span class="rating"><i class="fas fa-star"></i> 4.5</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
-
-        <!-- Game 8: Mixtape-->
-<div class="game-card" data-name="Mictape">
-    <div class="game-image">
-        <img src="https://i.ytimg.com/vi/F6TQF6eJa3Y/sddefault.jpg" alt="Mixtape">
-        <div class="game-overlay">
-            <a href="https://gamezone771.blogspot.com/?m=1" class="play-btn">
-                <i class="fas fa-play"></i> <span id="playText">Play Now</span>
-            </a>
-        </div>
-    </div>
-    <div class="game-info">
-        <h3>Mixtape</h3>
-        <p>Dive into the world of Mixtape — a nostalgic adventure full of music, memories, and unforgettable moments.
--Explore a cinematic story inspired by teenage friendships, late-night rides, and classic mixtapes.</p>
-        <div class="game-meta">
-            <span class="free-badge">FREE</span>
-            <span class="rating"><i class="fas fa-star"></i> 4.5</span>
-        </div>
-    </div>
-</div>
 
         <!-- About Section -->
         <section id="about" class="section">
@@ -283,6 +281,36 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <!-- Game Detail Modal -->
+    <div class="game-modal-overlay" id="gameModal" role="dialog" aria-modal="true">
+        <div class="game-modal">
+            <button class="game-modal-close" id="gameModalClose" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="game-modal-image">
+                <img id="gameModalImg" src="" alt="">
+            </div>
+            <div class="game-modal-body">
+                <h2 id="gameModalTitle"></h2>
+                <p id="gameModalDesc"></p>
+                <div class="game-modal-meta">
+                    <span class="free-badge">FREE</span>
+                    <span class="rating"><i class="fas fa-star"></i> <span id="gameModalRating"></span></span>
+                </div>
+                <div class="game-modal-buttons">
+                    <a href="https://gamezone771.blogspot.com/" target="_blank" rel="noopener" class="download-btn android-btn" id="androidBtn">
+                        <i class="fab fa-android"></i>
+                        <span id="androidBtnText">Download for Android</span>
+                    </a>
+                    <a href="https://gamezone771.blogspot.com/" target="_blank" rel="noopener" class="download-btn ios-btn" id="iosBtn">
+                        <i class="fab fa-apple"></i>
+                        <span id="iosBtnText">Download for iPhone</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
