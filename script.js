@@ -105,6 +105,78 @@ const gamesData = [
         img: "https://i.ytimg.com/vi/F6TQF6eJa3Y/sddefault.jpg",
         rating: "4.5",
         href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Minecraft",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1672970/header.jpg",
+        rating: "4.8",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Destiny 2",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1085660/header.jpg",
+        rating: "4.5",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Cyberpunk 2077",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg",
+        rating: "4.6",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "The Witcher 3: Wild Hunt",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/292030/header.jpg",
+        rating: "4.9",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Elden Ring",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg",
+        rating: "4.9",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Apex Legends",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1172470/header.jpg",
+        rating: "4.5",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Among Us",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/945360/header.jpg",
+        rating: "4.3",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Counter-Strike 2",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
+        rating: "4.4",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "PUBG: Battlegrounds",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/578080/header.jpg",
+        rating: "4.3",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Marvel's Spider-Man Remastered",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1817190/header.jpg",
+        rating: "4.8",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "Rocket League",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/252950/header.jpg",
+        rating: "4.6",
+        href: "https://gamezone771.blogspot.com/?m=1"
+    },
+    {
+        name: "FIFA 23",
+        img: "https://cdn.akamai.steamstatic.com/steam/apps/1811260/header.jpg",
+        rating: "4.2",
+        href: "https://gamezone771.blogspot.com/?m=1"
     }
 ];
 
@@ -117,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updatePageDirection();
     setupHamburgerMenu();
     setupSearchModal();
+    setupPagination();
     setupGameModal();
 });
 
@@ -314,6 +387,56 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
+
+// Pagination
+function setupPagination() {
+    const GAMES_PER_PAGE = 10;
+    let currentPage = 1;
+
+    const grid = document.getElementById('gamesGrid');
+    const cards = Array.from(grid.querySelectorAll('.game-card'));
+    const totalPages = Math.ceil(cards.length / GAMES_PER_PAGE);
+
+    function showPage(page) {
+        currentPage = page;
+        cards.forEach((card, i) => {
+            const cardPage = Math.floor(i / GAMES_PER_PAGE) + 1;
+            card.style.display = cardPage === page ? '' : 'none';
+        });
+        updateButtons();
+    }
+
+    function updateButtons() {
+        document.querySelectorAll('.pagination-btn[data-page]').forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.page) === currentPage);
+        });
+        const prevBtn = document.getElementById('paginationPrev');
+        const nextBtn = document.getElementById('paginationNext');
+        if (prevBtn) prevBtn.disabled = currentPage === 1;
+        if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+    }
+
+    function scrollToGames() {
+        document.getElementById('home').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    showPage(1);
+
+    document.getElementById('paginationPrev').addEventListener('click', () => {
+        if (currentPage > 1) { showPage(currentPage - 1); scrollToGames(); }
+    });
+
+    document.getElementById('paginationNext').addEventListener('click', () => {
+        if (currentPage < totalPages) { showPage(currentPage + 1); scrollToGames(); }
+    });
+
+    document.querySelectorAll('.pagination-btn[data-page]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const page = parseInt(btn.dataset.page);
+            if (page !== currentPage) { showPage(page); scrollToGames(); }
+        });
+    });
+}
 
 // Game Detail Modal
 function setupGameModal() {
